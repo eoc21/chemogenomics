@@ -8,7 +8,7 @@ from rdkit.Chem import AllChem
 from rdkit.Chem.Fingerprints import FingerprintMols
 from rdkit.Chem import MACCSkeys
 from rdkit.Chem.AtomPairs import Pairs
-
+from rdkit.Chem.rdReducedGraphs import GetErGFingerprint
 
 class FPCalculator(object):
     """
@@ -102,3 +102,21 @@ class FPCalculator(object):
         molecular_df['atom_pair_fp'] = fps
         return molecular_df
 
+    @staticmethod
+    def calculate_reduced_graph_fp(molecular_df, col):
+        """
+        Calculates Reduced Graph FP
+        :param molecular_df: pandas data frame containing molecules
+        :param col: column with molecules present
+        :return:
+        """
+        fps = []
+        for index, row in molecular_df.iterrows():
+            try:
+                mol = Chem.MolFromSmiles(row[col])
+                fp = GetErGFingerprint(mol)
+                fps.append(fp)
+            except:
+                fps.append("N/A")
+        molecular_df['reduced_graph_fp'] = fps
+        return molecular_df
